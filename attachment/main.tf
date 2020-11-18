@@ -1,10 +1,10 @@
-provider "aws" {
-  alias = "intersite"
-}
-
-provider "aws" {
-  alias = "environment"
-}
+//provider "aws" {
+//  alias = "intersite"
+//}
+//
+//provider "aws" {
+//  alias = "environment"
+//}
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "transit_gateway_attachment" {
   provider = "aws.environment"

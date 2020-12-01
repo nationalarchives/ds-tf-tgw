@@ -7,7 +7,7 @@ provider "aws" {
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "transit_gateway_attachment" {
-  provider = "aws.environment"
+  provider = aws.environment
 
   subnet_ids         = var.subnet_ids
   transit_gateway_id = var.transit_gateway_id
@@ -26,7 +26,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "transit_gateway_attachment" {
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "accept_tgw_attachment_in_intersite" {
-  provider                      = "aws.intersite"
+  provider                      = aws.intersite
   transit_gateway_attachment_id = aws_ec2_transit_gateway_vpc_attachment.transit_gateway_attachment.id
 
   tags = {

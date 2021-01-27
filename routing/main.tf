@@ -46,6 +46,7 @@ resource "aws_route" "intersite_private_route_table_route" {
 resource "aws_network_acl_rule" "public_nacl_rule" {
     count = length(var.env_public_nacl_rules)
 
+    provider = aws.environment
     network_acl_id = var.env_public_nacl.id
     rule_number    = var.env_public_nacl_rules[count.index]["rule_number"]
     egress         = var.env_public_nacl_rules[count.index]["egress"]
@@ -56,9 +57,13 @@ resource "aws_network_acl_rule" "public_nacl_rule" {
     to_port        = var.env_public_nacl_rules[count.index]["to_port"]
 }
 
+# ------------------------------------------------------------------------------
+# NACL and rules for private subnet
+# ------------------------------------------------------------------------------
 resource "aws_network_acl_rule" "private_nacl_rule" {
     count = length(var.env_private_nacl_rules)
 
+    provider = aws.environment
     network_acl_id = var.env_private_nacl.id
     rule_number    = var.env_private_nacl_rules[count.index]["rule_number"]
     egress         = var.env_private_nacl_rules[count.index]["egress"]
@@ -69,9 +74,13 @@ resource "aws_network_acl_rule" "private_nacl_rule" {
     to_port        = var.env_private_nacl_rules[count.index]["to_port"]
 }
 
+# ------------------------------------------------------------------------------
+# NACL and rules for private_db subnet
+# ------------------------------------------------------------------------------
 resource "aws_network_acl_rule" "private_db_nacl_rule" {
     count = length(var.env_private_db_nacl_rules)
 
+    provider = aws.environment
     network_acl_id = var.env_private_db_nacl.id
     rule_number    = var.env_private_db_nacl_rules[count.index]["rule_number"]
     egress         = var.env_private_db_nacl_rules[count.index]["egress"]

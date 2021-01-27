@@ -12,7 +12,7 @@ resource "aws_route" "public_route_table_route" {
 
   route_table_id            = var.env_public_rt
   destination_cidr_block    = var.routable_cidr_blocks[count.index]
-  transit_gateway_id        = var.tgw_id
+  transit_gateway_id        = var.transit_gateway_id
 }
 
 resource "aws_route" "private_route_table_route" {
@@ -21,7 +21,7 @@ resource "aws_route" "private_route_table_route" {
 
   route_table_id            = var.env_private_rt
   destination_cidr_block    = var.routable_cidr_blocks[count.index]
-  transit_gateway_id        = var.tgw_id
+  transit_gateway_id        = var.transit_gateway_id
 }
 
 resource "aws_route" "intersite_public_route_table_route" {
@@ -29,7 +29,7 @@ resource "aws_route" "intersite_public_route_table_route" {
 
   route_table_id            = var.intersite_public_rt
   destination_cidr_block    = var.env_vpc_cidr
-  transit_gateway_id        = var.tgw_id
+  transit_gateway_id        = var.transit_gateway_id
 }
 
 resource "aws_route" "intersite_private_route_table_route" {
@@ -37,7 +37,49 @@ resource "aws_route" "intersite_private_route_table_route" {
 
   route_table_id            = var.intersite_private_rt
   destination_cidr_block    = var.env_vpc_cidr
-  transit_gateway_id        = var.tgw_id
+  transit_gateway_id        = var.transit_gateway_id
+}
+
+# ------------------------------------------------------------------------------
+# NACL and rules for public subnet
+# ------------------------------------------------------------------------------
+resource "aws_network_acl_rule" "public_nacl_rule" {
+    count = length(var.env_public_nacl_rules)
+
+    network_acl_id = var.env_public_nacl.id
+    rule_number    = var.env_public_nacl_rules[count.index]["rule_number"]
+    egress         = var.env_public_nacl_rules[count.index]["egress"]
+    protocol       = var.env_public_nacl_rules[count.index]["protocol"]
+    rule_action    = var.env_public_nacl_rules[count.index]["rule_action"]
+    cidr_block     = var.env_public_nacl_rules[count.index]["cidr_block"]
+    from_port      = var.env_public_nacl_rules[count.index]["from_port"]
+    to_port        = var.env_public_nacl_rules[count.index]["to_port"]
+}
+
+resource "aws_network_acl_rule" "private_nacl_rule" {
+    count = length(var.env_private_nacl_rules)
+
+    network_acl_id = var.env_private_nacl.id
+    rule_number    = var.env_private_nacl_rules[count.index]["rule_number"]
+    egress         = var.env_private_nacl_rules[count.index]["egress"]
+    protocol       = var.env_private_nacl_rules[count.index]["protocol"]
+    rule_action    = var.env_private_nacl_rules[count.index]["rule_action"]
+    cidr_block     = var.env_private_nacl_rules[count.index]["cidr_block"]
+    from_port      = var.env_private_nacl_rules[count.index]["from_port"]
+    to_port        = var.env_private_nacl_rules[count.index]["to_port"]
+}
+
+resource "aws_network_acl_rule" "private_db_nacl_rule" {
+    count = length(var.env_private_db_nacl_rules)
+
+    network_acl_id = var.env_private_db_nacl.id
+    rule_number    = var.env_private_db_nacl_rules[count.index]["rule_number"]
+    egress         = var.env_private_db_nacl_rules[count.index]["egress"]
+    protocol       = var.env_private_db_nacl_rules[count.index]["protocol"]
+    rule_action    = var.env_private_db_nacl_rules[count.index]["rule_action"]
+    cidr_block     = var.env_private_db_nacl_rules[count.index]["cidr_block"]
+    from_port      = var.env_private_db_nacl_rules[count.index]["from_port"]
+    to_port        = var.env_private_db_nacl_rules[count.index]["to_port"]
 }
 
 //resource "aws_security_group_rule" "allow_mgmt_env_in" {
